@@ -7,9 +7,18 @@ class Holiday
 {
     public function sayXmas()
     {
-        if (date('m-d') === '12-25') {
+        $today = $this->getToday();
+        if ($today === '12-25') {
             return 'Merry Xmas';
         }
         return 'Today is not Xmas';
+    }
+
+    /**
+     * @return false|string
+     */
+    protected function getToday()
+    {
+        return date('m-d');
     }
 }
