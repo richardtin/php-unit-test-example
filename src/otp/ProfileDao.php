@@ -3,7 +3,7 @@
 namespace App\otp;
 
 
-class ProfileDao
+class ProfileDao implements IProfile
 {
     public function getPassword($account)
     {

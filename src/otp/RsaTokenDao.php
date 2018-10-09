@@ -3,7 +3,7 @@
 namespace App\otp;
 
 
-class RsaTokenDao
+class RsaTokenDao implements IToken
 {
     public function getRandom($account)
     {
