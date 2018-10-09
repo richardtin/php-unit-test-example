@@ -7,11 +7,32 @@ use PHPUnit\Framework\TestCase;
 
 class HolidayTest extends TestCase
 {
+    private $holiday;
+
+    protected function setUp()
+    {
+        $this->holiday = new HolidayForTest();
+    }
+
     public function testTodayIsXmas()
     {
-        $holiday = new HolidayForTest();
-        $holiday->setToday(date('12-25'));
-        $this->assertEquals('Merry Xmas', $holiday->sayXmas());
+        $this->givenToday('12', '25');
+        $this->shouldResponse('Merry Xmas');
+    }
+
+    public function test_1224_IsXmasToo() {
+        $this->givenToday('12', '24');
+        $this->shouldResponse('Merry Xmas');
+    }
+
+    private function givenToday($month, $day): void
+    {
+        $this->holiday->setToday(date($month . '-' . $day));
+    }
+
+    private function shouldResponse($expected): void
+    {
+        $this->assertEquals($expected, $this->holiday->sayXmas());
     }
 }
 
