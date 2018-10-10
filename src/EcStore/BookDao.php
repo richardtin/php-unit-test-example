@@ -3,7 +3,7 @@
 namespace App\EcStore;
 
 
-class BookDao
+class BookDao implements IBookDao
 {
     public function insert(Order $order)
     {

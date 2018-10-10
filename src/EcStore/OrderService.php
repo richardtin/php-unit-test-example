@@ -14,13 +14,13 @@ class OrderService
         $ordersOfBook = array_filter($orders, function ($order) {
             return $order->type === 'Book';
         });
-        $bookDao = new BookDao();
+        $bookDao = $this->getBookDao();
         foreach ($ordersOfBook as $order) {
             $bookDao->insert($order);
         }
     }
 
-    private function getOrders()
+    protected function getOrders()
     {
         // parse csv file to get orders
         return array_map(function ($line) {
@@ -37,5 +37,13 @@ class OrderService
         $order->customerName = $line[3];
 
         return $order;
+    }
+
+    /**
+     * @return IBookDao
+     */
+    protected function getBookDao(): IBookDao
+    {
+        return new BookDao();
     }
 }
