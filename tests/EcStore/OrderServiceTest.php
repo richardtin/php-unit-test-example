@@ -13,27 +13,52 @@ class OrderServiceTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
+    private $target;
+
+    private $spyBookDao;
+
+    protected function setUp()
+    {
+        $this->target = new OrderServiceForTest();
+        $this->spyBookDao = m::spy(IBookDao::class);
+        $this->target->setBookDao($this->spyBookDao);
+    }
+
+
     public function test_sync_book_orders_3_orders_only_2_book_order()
     {
-        $target = new OrderServiceForTest();
-        $order1 = new Order();
-        $order1->type = 'Book';
-        $order2 = new Order();
-        $order2->type = 'CD';
-        $order3 = new Order();
-        $order3->type = 'Book';
+        $this->givenOrders(['Book', 'CD', 'Book']);
 
-        $orders = [$order1, $order2, $order3];
-        $target->setOrders($orders);
+        $this->target->syncBookOrders();
 
-        $spyBookDao = m::spy(IBookDao::class);
-        $target->setBookDao($spyBookDao);
+        $this->bookDaoShouldInsert(2);
+    }
 
-        $target->syncBookOrders();
+    /**
+     * @param $type
+     * @return Order
+     */
+    private function createOrder($type): Order
+    {
+        $order = new Order();
+        $order->type = $type;
+        return $order;
+    }
 
-        $spyBookDao->shouldHaveReceived('insert')->with(m::on(function (Order $order) {
+    private function givenOrders($types): void
+    {
+        $orders = [];
+        foreach ($types as $type) {
+            $orders[] = $this->createOrder($type);
+        }
+        $this->target->setOrders($orders);
+    }
+
+    private function bookDaoShouldInsert($times): void
+    {
+        $this->spyBookDao->shouldHaveReceived('insert')->with(m::on(function (Order $order) {
             return $order->type === 'Book';
-        }))->times(2);
+        }))->times($times);
     }
 }
 
